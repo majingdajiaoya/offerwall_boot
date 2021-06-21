@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.wallplayer.mapper.WallPlayerMapper">
+	<!-- 根据用户名查询 -->
+	<select id="getPlayerByName" resultType="org.jeecg.modules.wallplayer.entity.WallPlayer">
+		select * from  wall_player  where player_name = #{playerName}
+	</select>
+    <!-- 查询被逻辑删除的用户 -->
+    <select id="selectLogicDeleted" resultType="org.jeecg.modules.wallplayer.entity.WallPlayer">
+		SELECT * FROM wall_player ${ew.customSqlSegment}
+	</select>
+    <!-- 更新被逻辑删除的wallPlayer -->
+    <update id="revertLogicDeleted">
+		UPDATE
+			wall_player
+		SET
+			del_flag = 0,
+			update_by = #{entity.updateBy},
+			update_time = #{entity.updateTime}
+		WHERE
+			del_flag = 1
+			AND id IN (${wallPlayerIds})
+	</update>
+    <!-- 彻底删除被逻辑删除的wallPlayer -->
+    <delete id="deleteLogicDeleted">
+		DELETE FROM wall_player WHERE del_flag = 1 AND id IN (${wallPlayerIds})
+	</delete>
+</mapper>

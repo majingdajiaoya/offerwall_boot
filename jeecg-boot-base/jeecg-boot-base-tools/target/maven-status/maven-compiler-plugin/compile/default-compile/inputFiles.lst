@@ -1,0 +1,12 @@
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/annotation/RabbitComponent.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/modules/redis/receiver/RedisReceiver.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/base/BaseMap.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/modules/redis/listener/JeecgRedisListerer.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/util/SpringContextHolder.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/modules/redis/config/RedisConfig.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/modules/redis/client/JeecgRedisClient.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/config/CommonConfig.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/constant/CacheConstant.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/modules/redis/writer/JeecgRedisCacheWriter.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/constant/GlobalConstants.java
+/Users/jth/IdeaProjects/offerwall/offerwall_boot/jeecg-boot-base/jeecg-boot-base-tools/src/main/java/org/jeecg/common/util/RedisUtil.java

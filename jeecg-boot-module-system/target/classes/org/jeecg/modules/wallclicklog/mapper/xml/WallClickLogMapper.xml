@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.wallclicklog.mapper.WallClickLogMapper">
+    <select id="getLogByUuid" resultType="org.jeecg.modules.wallclicklog.entity.WallClickLog">
+		SELECT * FROM wall_click_log where uuid_code= #{clickId}
+	</select>
+</mapper>

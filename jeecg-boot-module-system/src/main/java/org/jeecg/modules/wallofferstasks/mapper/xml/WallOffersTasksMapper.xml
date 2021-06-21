@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.wallofferstasks.mapper.WallOffersTasksMapper">
+
+    <!-- 查询被逻辑删除的task -->
+    <select id="selectLogicDeleted" resultType="org.jeecg.modules.wallofferstasks.entity.WallOffersTasks">
+		SELECT * FROM wall_offers_tasks ${ew.customSqlSegment}
+	</select>
+    <!-- 更新被逻辑删除的offer -->
+    <update id="revertLogicDeleted">
+		UPDATE
+			wall_offers_tasks
+		SET
+			del_flag = 0,
+			update_by = #{entity.updateBy},
+			update_time = #{entity.updateTime}
+		WHERE
+			del_flag = 1
+			AND id IN (${tasksIds})
+	</update>
+    <!-- 彻底删除被逻辑删除的offer -->
+    <delete id="deleteLogicDeleted">
+		DELETE FROM wall_offers_tasks WHERE del_flag = 1 AND id IN (${tasksIds})
+	</delete>
+
+	<!-- 查询tasksId对应的playername信息 -->
+	<select id="getPlayerNamesByUserIds" resultType="org.jeecg.modules.wallofferstasks.entity.TaskPlayerVo">
+		select p.player_name,t.id from wall_offers_tasks t,wall_player p where p.id = t.player_id and t.id in
+		<foreach collection="tasksIds" index="index" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	<!-- 查询tasksId对应的offername信息 -->
+	<select id="getOfferNamesByUserIds" resultType="org.jeecg.modules.wallofferstasks.entity.TaskOfferVo">
+		select a.name,t.id from wall_offers_tasks t,wall_advertisers_offer a where a.id = t.offer_id and t.id in
+		<foreach collection="tasksIds" index="index" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	<!-- 查询用户已有的指定任务 -->
+	<select id="getTaskByIds" resultType="org.jeecg.modules.wallofferstasks.entity.WallOffersTasks">
+		select * from wall_offers_tasks  where player_id = #{playerId} and offer_id = #{offerId}
+	</select>
+	<!-- 用户查询名下所有任务 -->
+	<select id="queryTasksByPlayerId" resultType="org.jeecg.modules.wallofferstasks.entity.WallOffersTasks">
+		select * from wall_offers_tasks  where player_id = #{playerId}
+	</select>
+	<!-- clickid任务 -->
+	<select id="getByClickId" resultType="org.jeecg.modules.wallofferstasks.entity.WallOffersTasks">
+		select * from wall_offers_tasks  where click_id = #{click_id}
+	</select>
+</mapper>
