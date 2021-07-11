@@ -42,8 +42,23 @@
 		select * from wall_offers_tasks  where player_id = #{playerId} and offer_id = #{offerId}
 	</select>
 	<!-- 用户查询名下所有任务 -->
-	<select id="queryTasksByPlayerId" resultType="org.jeecg.modules.wallofferstasks.entity.WallOffersTasks">
-		select * from wall_offers_tasks  where player_id = #{playerId}
+	<select id="getTaskPageList" resultType="org.jeecg.modules.wallofferstasks.entity.TaskOfferListVo">
+				SELECT
+					a.id as 'id',
+					a.player_id as 'playerId',
+					b.id as 'offerId',
+					b.icon as 'icon',
+					b.des as 'des',
+					b.goal as 'goal',
+					b.name as 'offerName',
+					a.status as 'status'
+				FROM
+					wall_offers_tasks a LEFT JOIN
+					wall_advertisers_offer b
+				on
+					a.offer_id = b.id
+					where a.del_flag  = #{taskParams.delFlag}
+					and a.player_id = #{taskParams.playerId}
 	</select>
 	<!-- clickid任务 -->
 	<select id="getByClickId" resultType="org.jeecg.modules.wallofferstasks.entity.WallOffersTasks">

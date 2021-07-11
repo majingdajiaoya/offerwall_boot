@@ -25,11 +25,14 @@ import org.jeecg.modules.wallclicklog.entity.WallClickLog;
 import org.jeecg.modules.wallclicklog.service.IWallClickLogService;
 import org.jeecg.modules.wallconverions.entity.WallConverions;
 import org.jeecg.modules.wallconverions.service.IWallConverionsService;
+import org.jeecg.modules.wallofferstasks.entity.TaskOfferListVo;
 import org.jeecg.modules.wallofferstasks.entity.WallOffersTasks;
 import org.jeecg.modules.wallofferstasks.service.IWallOffersTasksService;
 import org.jeecg.modules.wallplayer.entity.WallPlayer;
+import org.jeecg.modules.wallplayer.entity.WallPlayerVo;
 import org.jeecg.modules.wallplayer.service.IWallPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -214,19 +217,25 @@ public class Ads {
     @PostMapping(value = "/addTask")
     public Result<?> addTask(WallOffersTasks task, HttpServletRequest request) {
         Result<String> result = new Result<String>();
-        if ("".equals(StrUtil.nullToEmpty(task.getPlayerId()))||"".equals(StrUtil.nullToEmpty(task.getOfferId()))){
+        //登录验证
+        WallPlayer player = (WallPlayer)request.getSession().getAttribute("playerUser");
+        if (player==null){
+            result.setMessage("用户未登录，请重新登录后再操作！");
+            result.setSuccess(false);
+            return result;
+        }
+        if ("".equals(StrUtil.nullToEmpty(task.getOfferId()))){
             result.setMessage("请求参数有误，请重新请求！");
             result.setSuccess(false);
             return result;
         }
-        WallOffersTasks taskTmp = wallOffersTasksService.getTaskByIds(task.getOfferId(), task.getPlayerId());
+        WallOffersTasks taskTmp = wallOffersTasksService.getTaskByIds(task.getOfferId(), player.getId()+"");
 
         if (taskTmp != null) {
             result.setMessage("任务已存在，请重新选择！");
             result.setSuccess(false);
             return result;
         }
-        WallPlayer player = wallPlayerService.getById(task.getPlayerId());
         WallAdvertisersOffer offer = wallAdvertisersOfferService.getById(task.getOfferId());
         String ip = IPUtils.getIpAddr(request);
         String ua = request.getHeader("user-agent");
@@ -240,18 +249,20 @@ public class Ads {
             task.setClickDevice(uaInfo.get("device"));
             task.setClickOsVersion(uaInfo.get("version"));
             task.setClickDeviceName(uaInfo.get("deviceName"));
+            result.setMessage("添加任务成功！");
             result.success("添加任务成功");
         } else {
             task.setClickPlatform(-1);
             task.setClickDevice("error");
             task.setClickOsVersion("error");
             task.setClickDeviceName("error");
-            result.error500("ua数据错误，添加任务成功");
+            result.setMessage("ua数据错误，添加任务成功!");
+            result.success("ua数据错误，添加任务成功");
         }
         //click_id 处理
         String plaintext= task.getOfferId()+task.getPlayerId();
         //playerId+offerId+md5(palyerId=x&offerId=x)
-        String encode =plaintext + MD5Util.MD5Encode("palyerId="+task.getPlayerId()+"&offerId="+task.getOfferId(),"utf-8");
+        String encode =plaintext + MD5Util.MD5Encode("palyerId="+player.getId()+"&offerId="+task.getOfferId(),"utf-8");
         task.setClickId(encode);
 
         task.setOfferName(offer.getName());
@@ -262,10 +273,10 @@ public class Ads {
         task.setClickUa(ua);
         task.setCreateBy(player.getPlayerName());
         task.setCreateTime(new Date());
-        log.info("task=======" + task);
         wallOffersTasksService.save(task);
         //返回前台302跳转方法地址
         result.setResult("/ads/redirectTask?click_id="+encode);
+        System.out.println("result============"+result);
         return result;
     }
     /**
@@ -278,12 +289,25 @@ public class Ads {
     @ApiOperation(value = "ads-查询任务", notes = "ads-查询任务")
     @GetMapping(value = "/queryTasks")
     public Result<?> queryTasks(String playerId, HttpServletRequest request) {
-        List<WallOffersTasks> tasks = new ArrayList<WallOffersTasks>();
+//        List<WallOffersTasks> tasks = new ArrayList<WallOffersTasks>();
+        Page<TaskOfferListVo> tasks =null;
+        Integer pageNo =1;
+        Integer pageSize =10;
+        //登录验证
+        WallPlayer player = (WallPlayer)request.getSession().getAttribute("playerUser");
+        if (player==null){
+            return Result.error("用户未登录，请重新登录后再操作！");
+        }
+        WallOffersTasks task = new WallOffersTasks();
+        task.setPlayerId(player.getId()+"");
+        task.setDelFlag(0);
         try {
-            tasks = wallOffersTasksService.queryTasksByPlayerId(playerId);
+            tasks = wallOffersTasksService.getTaskPageList(new Page<TaskOfferListVo>(pageNo, pageSize),task);
         } catch (Exception e) {
             Result.error("查询任务失败" + e.getMessage());
         }
+        System.out.println("task===="+task);
+        System.out.println("tasks===="+tasks);
         return Result.OK("查询任务成功", tasks);
     }
     /**
@@ -295,12 +319,20 @@ public class Ads {
     @AutoLog(value = "wallPlayer-注册")
     @ApiOperation(value="wallPlayer-注册", notes="wallPlayer-注册")
     @PostMapping(value = "/register")
-    public Result<?> register( WallPlayer wallPlayer, HttpServletRequest request) {
+    public Result<?> register(@RequestBody WallPlayer wallPlayer, HttpServletRequest request) {
         Result<WallPlayer> result = new Result<WallPlayer>();
+        if (wallPlayer.getPlayerName()==null||"".equals(wallPlayer.getPlayerName().trim())
+        ||wallPlayer.getPlayerPassword()==null||"".equals(wallPlayer.getPlayerPassword().trim())){
+            result.setMessage("用户名或密码有误，请重新填写！");
+            result.setSuccess(false);
+            return result;
+        }
         WallPlayer player = wallPlayerService.getPlayerByName(wallPlayer.getPlayerName());
+        System.out.println("player======"+player);
         if (player != null) {
             result.setMessage("用户名已注册");
             result.setSuccess(false);
+            System.out.println("result======"+result);
             return result;
         }
 
@@ -324,6 +356,8 @@ public class Ads {
             wallPlayerService.save(wallPlayer);
             result.success("注册成功");
         } catch (Exception e) {
+            result.setMessage("注册失败"+e.getMessage());
+            result.setSuccess(false);
             result.error500("注册失败"+e.getMessage());
         }
         log.info(wallPlayer.getPlayerName()+"注册成功========");
@@ -339,25 +373,38 @@ public class Ads {
     @ApiOperation(value="wallPlayer-登录", notes="wallPlayer-登录")
     @PostMapping (value = "/wallPlayerLogin")
     public Result<?> wallPlayerLogin( WallPlayer player, HttpServletRequest request) {
-        Result<WallPlayer> result = new Result<WallPlayer>();
+        Result<WallPlayerVo> result = new Result<WallPlayerVo>();
         String name=player.getPlayerName();
         String password=player.getPlayerPassword();
         WallPlayer checkPlayer = wallPlayerService.getPlayerByName(name);
-        if (checkPlayer != null) {
-            result.error500("用户名或密码错误!");
+        if (checkPlayer == null) {
+            result.setSuccess(false);
+            result.setMessage("用户名或密码错误!");
             return result;
         }
         String checkPassword = PasswordUtil.encrypt(name, password, checkPlayer.getSalt());
+        password = checkPlayer.getPlayerPassword();
         if (!password.equals(checkPassword)) {
-            result.error500("用户名或密码错误!");
+            result.setSuccess(false);
+            result.setMessage("用户名或密码错误!");
             return result;
         }
-        result.setResult(checkPlayer);
+        WallPlayerVo vo = new WallPlayerVo();
+        vo.setId(checkPlayer.getId());
+        vo.setPlayerName(checkPlayer.getPlayerName());
+        //将user保存到session中，再次访问页面的时候，登录拦截器就可以找到这个user对象，就不需要再次拦截到登录界面了.
+        request.getSession().setAttribute("playerUser", checkPlayer);
+        result.setResult(vo);
         result.success("登录成功");
         log.info(name+"登录成功========");
         return result;
     }
 
+    public static void main(String[] args) {
+        String checkPassword = PasswordUtil.encrypt("test1", "123456", "RCGTeGiH");
+        System.out.println("checkPassword=="+checkPassword);
+
+    }
     /**
      * 获取用户访问ua信息
      *

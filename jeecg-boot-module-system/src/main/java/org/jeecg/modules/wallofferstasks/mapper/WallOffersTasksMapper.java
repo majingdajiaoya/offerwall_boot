@@ -4,12 +4,16 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.advertisersoffer.entity.WallAdvertisersOffer;
+import org.jeecg.modules.system.entity.SysUser;
+import org.jeecg.modules.wallofferstasks.entity.TaskOfferListVo;
 import org.jeecg.modules.wallofferstasks.entity.TaskOfferVo;
 import org.jeecg.modules.wallofferstasks.entity.TaskPlayerVo;
 import org.jeecg.modules.wallofferstasks.entity.WallOffersTasks;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.jeecg.modules.wallplayer.entity.WallPlayer;
 
 /**
  * @Description: wall_offers_tasks
@@ -52,11 +56,12 @@ public interface WallOffersTasksMapper extends BaseMapper<WallOffersTasks> {
      */
     WallOffersTasks getTaskByIds(String offerId, String playerId);
     /**
+    /**
      * 用户查询名下所有任务
-     * @param playerId
+     * @param taskParams
      * @return
      */
-    List<WallOffersTasks> queryTasksByPlayerId(String playerId);
+    List<TaskOfferListVo> queryTasksByPlayerId(@Param("taskParams")WallOffersTasks taskParams);
 
     /**
      *
@@ -65,4 +70,5 @@ public interface WallOffersTasksMapper extends BaseMapper<WallOffersTasks> {
      */
     WallOffersTasks getByClickId(String click_id);
 
+    List<TaskOfferListVo> getTaskPageList(Page<TaskOfferListVo> page, @Param("taskParams")WallOffersTasks taskParams);
 }

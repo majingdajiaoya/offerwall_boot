@@ -1,8 +1,11 @@
 package org.jeecg.modules.wallofferstasks.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.jeecg.modules.wallofferstasks.entity.TaskOfferListVo;
 import org.jeecg.modules.wallofferstasks.entity.WallOffersTasks;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.wallplayer.entity.WallPlayer;
 
 import java.util.List;
 import java.util.Map;
@@ -48,14 +51,12 @@ public interface IWallOffersTasksService extends IService<WallOffersTasks> {
      * @return
      */
     WallOffersTasks getTaskByIds(String offerId, String playerId);
-
     /**
      * 用户查询名下所有任务
-     * @param playerId
+     * @param task
      * @return
      */
-    List<WallOffersTasks> queryTasksByPlayerId(String playerId);
-
+    List<TaskOfferListVo> queryTasksByPlayerId(WallOffersTasks task);
     /**
      *
      * @param click_id
@@ -63,4 +64,5 @@ public interface IWallOffersTasksService extends IService<WallOffersTasks> {
      */
     WallOffersTasks getByClickId(String click_id);
 
+    Page<TaskOfferListVo> getTaskPageList(Page<TaskOfferListVo> objectPage, WallOffersTasks task);
 }

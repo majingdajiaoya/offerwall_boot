@@ -1,12 +1,15 @@
 package org.jeecg.modules.wallofferstasks.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.common.constant.CommonConstant;
+import org.jeecg.modules.wallofferstasks.entity.TaskOfferListVo;
 import org.jeecg.modules.wallofferstasks.entity.TaskOfferVo;
 import org.jeecg.modules.wallofferstasks.entity.TaskPlayerVo;
 import org.jeecg.modules.wallofferstasks.entity.WallOffersTasks;
 import org.jeecg.modules.wallofferstasks.mapper.WallOffersTasksMapper;
 import org.jeecg.modules.wallofferstasks.service.IWallOffersTasksService;
+import org.jeecg.modules.wallplayer.entity.WallPlayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -92,14 +95,18 @@ public class WallOffersTasksServiceImpl extends ServiceImpl<WallOffersTasksMappe
     }
 
     @Override
-    public List<WallOffersTasks> queryTasksByPlayerId(String playerId) {
-        List<WallOffersTasks> tasks = this.tasksMapper.queryTasksByPlayerId(playerId);
+    public List<TaskOfferListVo> queryTasksByPlayerId(WallOffersTasks task) {
+        List<TaskOfferListVo> tasks = this.tasksMapper.queryTasksByPlayerId(task);
         return tasks;
     }
-
     @Override
     public WallOffersTasks getByClickId(String click_id) {
         return this.tasksMapper.getByClickId(click_id);
+    }
+
+    @Override
+    public Page<TaskOfferListVo> getTaskPageList(Page<TaskOfferListVo> page, WallOffersTasks task) {
+        return page.setRecords(tasksMapper.getTaskPageList(page,  task));
     }
 
 }

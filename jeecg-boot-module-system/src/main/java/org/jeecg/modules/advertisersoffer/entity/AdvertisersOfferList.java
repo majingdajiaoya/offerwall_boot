@@ -2,9 +2,12 @@ package org.jeecg.modules.advertisersoffer.entity;
 
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.jeecg.common.aspect.annotation.Dict;
+import org.jeecgframework.poi.excel.annotation.Excel;
 
 import java.io.Serializable;
 
@@ -35,5 +38,8 @@ public class AdvertisersOfferList implements Serializable {
     private Integer weight;
     private Integer status;
     private Integer delFlag;
-
+    private String icon;
+    private Integer estimateDays;
+    private Integer category;
+    private Integer deviceType;
 }

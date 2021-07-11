@@ -139,4 +139,14 @@ public class WallAdvertisersOffer implements Serializable {
     @ApiModelProperty(value = "难易程度")
     @Dict(dicCode = "estimate_days")
     private Integer estimateDays;
+
+    @Excel(name = "国家", width = 15,dicCode="country")
+    @ApiModelProperty(value = "国家")
+    @Dict(dicCode = "country")
+    private String country;
+
+    @Excel(name = "设备类型", width = 15,dicCode="device_type")
+    @ApiModelProperty(value = "设备类型")
+    @Dict(dicCode = "device_type")
+    private Integer deviceType;
 }
